@@ -1,34 +1,33 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export default async function handler(req, res) {
-  // Manejo de CORS y método (Solo permitimos POST)
+  // Solo permitimos POST
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: "Método no permitido" });
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-  
-  // Aquí definimos el modelo con tu identidad
-  const model = genAI.getGenerativeModel({ 
-    model: "gemini-1.5-flash",
-    systemInstruction: "Eres Geraldine Cárdenas, ingeniera de software y estratega ágil. Ayudas a mujeres profesionales a ser más productivas usando el método de Sprints Diarios y la Matriz de Valor. Eres empática, clara y muy profesional."
-  });
+  // Verificamos que la API KEY exista en las variables de entorno
+  if (!process.env.GEMINI_API_KEY) {
+    return res.status(500).json({ error: "Falta la API KEY en Vercel" });
+  }
 
   try {
-    // Extraemos el mensaje del cuerpo de la petición
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
     const { message } = req.body;
 
-    if (!message) {
-      return res.status(400).json({ error: "No se recibió mensaje" });
-    }
+    // El prompt de sistema se lo pasamos aquí directamente para evitar errores de configuración
+    const prompt = `Actúa como Geraldine Cárdenas, ingeniera experta en agilidad. 
+    Ayuda a esta usuaria a organizar estas tareas usando el método de Sprints y Matriz de Valor: ${message}`;
 
-    const result = await model.generateContent(message);
+    const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
 
-    res.status(200).json({ text });
+    return res.status(200).json({ text });
   } catch (error) {
-    console.error("Error en Gemini:", error);
-    res.status(500).json({ error: "Error de conexión con la IA", details: error.message });
+    console.error("Error detallado:", error);
+    return res.status(500).json({ error: "Error de Gemini", details: error.message });
   }
 }
