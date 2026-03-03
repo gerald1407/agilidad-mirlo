@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geraldine Cárdenas - Asistente Ágil</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .chat-container { height: 60vh; overflow-y: auto; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <header class="bg-indigo-900 text-white p-4 shadow-lg text-center">
+        <h1 class="text-xl font-bold">Geraldine Cárdenas</h1>
+        <p class="text-sm opacity-80">Ingeniería & Estrategia de Valor</p>
+    </header>
+
+    <main class="flex-grow p-4 max-w-2xl mx-auto w-full">
+        <div class="bg-white rounded-xl shadow-md p-4 mb-4 border border-indigo-100">
+            <p class="text-indigo-900 font-semibold mb-2">¡Hola! Soy tu Mentor IA 🤖</p>
+            <p class="text-sm text-gray-600">Cuéntame tus pendientes de hoy y te ayudaré a organizarlos con el método de Geraldine.</p>
+        </div>
+
+        <div id="chat-box" class="chat-container space-y-4 mb-4 p-2">
+            </div>
+    </main>
+
+    <footer class="p-4 bg-white border-t border-gray-200 sticky bottom-0">
+        <div class="max-w-2xl mx-auto flex gap-2">
+            <input type="text" id="user-input" placeholder="Ej: Tengo muchas tareas, ¿cómo priorizo?" 
+                   class="flex-grow border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <button onclick="sendMessage()" id="send-btn" class="bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-indigo-700 transition">
+                Enviar
+            </button>
+        </div>
+        <p class="text-[10px] text-center mt-2 text-gray-400 text-uppercase tracking-widest">Powered by Gemini AI & Geraldine Cárdenas</p>
+    </footer>
+
+    <script type="module">
+        import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
+
+        // CONFIGURACIÓN: Aquí va tu API KEY de Google AI Studio
+        const API_KEY = "TU_API_KEY_AQUÍ"; 
+        const genAI = new GoogleGenerativeAI(API_KEY);
+
+        const model = genAI.getGenerativeModel({ 
+            model: "gemini-1.5-flash",
+            systemInstruction: "Actúa como Geraldine Cárdenas, ingeniera experta en agilidad. Tu objetivo es ayudar a mujeres profesionales a organizar su día usando el método: Sprints diarios, Matriz de Valor (Quick Wins, Grandes Proyectos, Trampas y Ruido) y la Regla de los 2 Minutos. Sé empática, técnica pero clara, y siempre motivadora. Si te dan una lista de tareas, clasifícalas estratégicamente."
+        });
+
+        window.sendMessage = async async () => {
+            const inputField = document.getElementById('user-input');
+            const chatBox = document.getElementById('chat-box');
+            const message = inputField.value.trim();
+
+            if (!message) return;
+
+            // Mostrar mensaje del usuario
+            appendMessage('user', message);
+            inputField.value = '';
+
+            try {
+                const result = await model.generateContent(message);
+                const response = await result.response;
+                appendMessage('ai', response.text());
+            } catch (error) {
+                appendMessage('ai', "Lo siento, tuve un pequeño error de conexión. ¿Podrías intentar de nuevo?");
+                console.error(error);
+            }
+        };
+
+        function appendMessage(sender, text) {
+            const chatBox = document.getElementById('chat-box');
+            const div = document.createElement('div');
+            div.className = sender === 'user' ? 'text-right' : 'text-left';
+            div.innerHTML = `
+                <div class="inline-block p-3 rounded-lg ${sender === 'user' ? 'bg-indigo-100 text-indigo-900' : 'bg-gray-200 text-gray-800'} text-sm max-w-[80%]">
+                    ${text}
+                </div>
+            `;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
