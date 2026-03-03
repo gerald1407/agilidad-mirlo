@@ -53,11 +53,13 @@
         inputField.value = '';
 
         try {
-            // Llamada a tu API en Vercel
+            // Llamada a tu API en Vercel          
             const response = await fetch('/api/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: message })
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json' // Esto es vital
+            },
+            body: JSON.stringify({ message: message }) // Enviamos un objeto JSON
             });
             
             const data = await response.json();
