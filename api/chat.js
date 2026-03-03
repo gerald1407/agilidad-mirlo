@@ -3,14 +3,14 @@ export default async function handler(req, res) {
 
   const API_KEY = process.env.GEMINI_API_KEY;
   // Cambiamos a v1beta (que es donde vive Flash) pero con fetch directo para evitar errores de librería
-  const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+  const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}';
 
   try {
     const { message } = req.body;
 
     const payload = {
       contents: [{
-        parts: [{ text: `Actúa como Geraldine Cárdenas, ingeniera experta en agilidad. Ayuda a priorizar esto: ${message}` }]
+        parts: [{ text: 'Actúa como Geraldine Cárdenas, ingeniera experta en agilidad. Ayuda a priorizar esto: ${message}' }]
       }]
     };
 
@@ -26,7 +26,7 @@ export default async function handler(req, res) {
     if (data.error) {
       // Si Flash falla, intentamos el "Fallback" a Gemini Pro automáticamente
       console.log("Flash falló, intentando con Gemini Pro...");
-      const PRO_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`;
+      const PRO_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}';
       const proRes = await fetch(PRO_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
