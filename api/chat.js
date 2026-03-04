@@ -1,45 +1,42 @@
 export default async function handler(req, res) {
+  // Manejo de seguridad básico
   if (req.method !== 'POST') return res.status(405).json({ error: "Method not allowed" });
 
-  const API_KEY = process.env.GEMINI_API_KEY;
-  const { message } = req.body;
+  const API_KEY = process.env.GEMINI_API_KEY; // Tu llave gsk_...
 
-  // Lista de modelos para probar en orden de prioridad
-  const modelsToTry = [
-    "gemini-1.5-flash",
-    "gemini-1.5-pro",
-    "gemini-pro"
-  ];
+  try {
+    const { message } = req.body;
 
-  for (const modelName of modelsToTry) {
-    try {
-      const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${API_KEY}`;
-      
-      const response = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: `Eres Geraldine Cárdenas, ingeniera experta. Prioriza esto: ${message}` }] }]
-        })
-      });
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: "llama-3.3-70b-versatile",
+        messages: [
+          { 
+            role: "system", 
+            content: "Eres Geraldine Cárdenas, ingeniera experta en agilidad. Tu misión es ayudar a organizar tareas usando Sprints y Matriz de Valor. Sé profesional, empática y muy directa." 
+          },
+          { role: "user", content: message }
+        ],
+        temperature: 0.7
+      })
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
-      // Si este modelo funcionó, enviamos la respuesta y terminamos el bucle
-      if (data.candidates && data.candidates[0].content) {
-        const text = data.candidates[0].content.parts[0].text;
-        return res.status(200).json({ text });
-      }
-      
-      console.log(`Modelo ${modelName} no disponible, probando el siguiente...`);
-    } catch (e) {
-      continue; // Si hay error de red con un modelo, probamos el siguiente
+    if (data.error) {
+      return res.status(500).json({ error: "Error de Groq", detail: data.error.message });
     }
-  }
 
-  // Si llegamos aquí es que ninguno funcionó
-  return res.status(500).json({ 
-    error: "Error de Configuración de Google", 
-    detail: "Ningún modelo (Flash, Pro o Gemini-Pro) respondió. Revisa si tu API Key está activa en Google AI Studio." 
-  });
+    // Respuesta limpia del modelo
+    const aiResponse = data.choices[0].message.content;
+    return res.status(200).json({ text: aiResponse });
+
+  } catch (error) {
+    return res.status(500).json({ error: "Error de servidor", detail: error.message });
+  }
 }
