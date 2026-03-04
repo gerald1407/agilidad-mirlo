@@ -2,7 +2,7 @@ export default async function handler(req, res) {
   // Manejo de seguridad básico
   if (req.method !== 'POST') return res.status(405).json({ error: "Method not allowed" });
 
-  const API_KEY = process.env.GEMINI_API_KEY; // Tu llave gsk_...
+  const API_KEY = process.env.GROQ_API_KEY; // Tu llave gsk_...
 
   try {
     const { message } = req.body;
