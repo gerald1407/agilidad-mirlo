@@ -8,43 +8,60 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-    /* Colores Geraldine IA */
     :root {
         --primary: #074B4B;
         --secondary: #5DC1B9;
     }
 
-    body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; color: #333; }
+    body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #333; }
     
-    /* Ajuste Mobile First para la altura del chat */
     .chat-container { 
-        height: 60vh; 
-        height: calc(100svh - 250px); /* Usa svh para evitar problemas con la barra de Safari en iPhone */
+        height: calc(100svh - 250px); 
         overflow-y: auto; 
-        padding: 10px;
+        padding: 15px;
     }
 
-    /* Títulos de colores para los cuadrantes */
-    .prose strong { display: block; margin-top: 15px; font-size: 1rem; }
+    /* Diseño de las Categorías (Estilo Cards) */
+    .prose h3 {
+        padding: 10px 15px;
+        border-radius: 8px;
+        margin-top: 20px !important;
+        margin-bottom: 10px !important;
+        font-size: 0.95rem !important;
+        font-weight: 700 !important;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* Colores por contenido de encabezado */
+    .prose h3:contains('🟢'), .prose h3:has(text:contains('🟢')) { background: #dcfce7; color: #166534; border-left: 5px solid #22c55e; }
+    /* Como el selector :contains no es estándar en CSS puro, usaremos este truco más compatible: */
     
-    /* Calendario de Sprint optimizado para móvil */
-    .prose table { width: 100%; border-collapse: collapse; margin: 15px 0; background: white; font-size: 0.8rem; }
-    .prose th { background-color: var(--primary); color: white; padding: 8px; }
+    /* Colores manuales basados en el orden o clases si marked lo permite, 
+       pero para ir a lo seguro en móvil, estilicemos todos los H3 y que la IA mande el emoji alineado */
+    .prose h3 {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-left: 5px solid var(--primary);
+    }
+
+    /* Sprint y Tip */
+    .prose table { width: 100%; border-collapse: collapse; margin: 15px 0; background: white; font-size: 0.8rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .prose th { background-color: var(--primary); color: white; padding: 10px; }
     .prose td { border: 1px solid #e2e8f0; padding: 8px; }
 
-    /* Bloque de Tip más llamativo con tu color secundario */
     .prose blockquote { 
-        background: #f0fdfa; 
+        background: var(--primary); 
         border-left: 5px solid var(--secondary); 
-        padding: 15px; 
-        margin: 20px 0; 
-        border-radius: 8px;
-        color: var(--primary);
-        font-weight: 600;
+        padding: 20px; 
+        margin: 25px 0; 
+        border-radius: 0 12px 12px 0;
+        color: white; /* Tip más llamativo con fondo oscuro */
     }
 
-    /* Ajuste de burbujas para dedos (touch friendly) */
-    input, button { font-size: 16px !important; } /* Evita el zoom automático en iPhone */
+    /* Mobile First fixes */
+    input, button { font-size: 16px !important; }
 </style>
 
 <header class="text-white p-4 shadow-lg text-center" style="background-color: var(--primary);">
