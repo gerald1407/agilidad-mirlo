@@ -3,105 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geraldine Cárdenas - Asistente Ágil</title>
+    <title>Gery - Mentora de Productividad</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-    :root {
-        --primary: #074B4B;
-        --secondary: #5DC1B9;
-    }
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <style>
+        :root {
+            --primary: #11d4c4;
+            --deep-teal: #004D40;
+            --soft-purple: #ede7f6;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: #f6f8f8; }
+        
+        /* Ajuste de altura para móviles (iPhone fix) */
+        .chat-area { height: calc(100svh - 260px); overflow-y: auto; scroll-behavior: smooth; }
 
-    body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #333; }
-    
-    .chat-container { 
-        height: calc(100svh - 250px); 
-        overflow-y: auto; 
-        padding: 15px;
-    }
-
-    /* Diseño de las Categorías (Estilo Cards) */
-    .prose h3 {
-        padding: 10px 15px;
-        border-radius: 8px;
-        margin-top: 20px !important;
-        margin-bottom: 10px !important;
-        font-size: 0.95rem !important;
-        font-weight: 700 !important;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    /* Colores por contenido de encabezado */
-    .prose h3:contains('🟢'), .prose h3:has(text:contains('🟢')) { background: #dcfce7; color: #166534; border-left: 5px solid #22c55e; }
-    /* Como el selector :contains no es estándar en CSS puro, usaremos este truco más compatible: */
-    
-    /* Colores manuales basados en el orden o clases si marked lo permite, 
-       pero para ir a lo seguro en móvil, estilicemos todos los H3 y que la IA mande el emoji alineado */
-    .prose h3 {
-        background: white;
-        border: 1px solid #e2e8f0;
-        border-left: 5px solid var(--primary);
-    }
-
-    /* Sprint y Tip */
-    .prose table { width: 100%; border-collapse: collapse; margin: 15px 0; background: white; font-size: 0.8rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-    .prose th { background-color: var(--primary); color: white; padding: 10px; }
-    .prose td { border: 1px solid #e2e8f0; padding: 8px; }
-
-    .prose blockquote { 
-        background: var(--primary); 
-        border-left: 5px solid var(--secondary); 
-        padding: 20px; 
-        margin: 25px 0; 
-        border-radius: 0 12px 12px 0;
-        color: white; /* Tip más llamativo con fondo oscuro */
-    }
-
-    /* Mobile First fixes */
-    input, button { font-size: 16px !important; }
-</style>
-
-<header class="text-white p-4 shadow-lg text-center" style="background-color: var(--primary);">
-    <h1 class="text-xl font-bold">Geraldine Cárdenas</h1>
-    <p class="text-sm opacity-80">Ingeniería & Estrategia de Valor</p>
-</header>
+        /* Estilos para el contenido que genera la IA (Markdown) */
+        .prose h3 { 
+            font-size: 0.9rem !important; 
+            font-weight: 700; 
+            margin: 15px 0 8px 0;
+            display: flex; 
+            align-items: center; 
+            gap: 8px;
+            color: var(--deep-teal);
+        }
+        .prose table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 0.8rem; background: white; border-radius: 8px; overflow: hidden; }
+        .prose th { background: var(--deep-teal); color: white; padding: 8px; }
+        .prose td { border: 1px solid #e2e8f0; padding: 8px; }
+        .prose blockquote { 
+            background: #f0fdfa; border-left: 4px solid var(--primary); 
+            padding: 12px; margin: 15px 0; border-radius: 4px; font-style: italic; color: var(--deep-teal);
+        }
+    </style>
 </head>
-<body class="flex flex-col min-h-screen">
+<body class="bg-slate-100 flex justify-center">
 
-    <main class="flex-grow p-4 max-w-2xl mx-auto w-full">
-        <div class="bg-white rounded-xl shadow-md p-6 mb-4 border border-indigo-50">
-            <p class="text-center font-semibold mb-2" style="color: var(--primary);">
-                ¡Hola! Soy Gery tu Mentora de Productividad con IA 🤖
-            </p>
-            <p class="text-sm text-center text-gray-600">
-                Cuéntame tus pendientes de hoy y te ayudaré a organizarlos con mi método de ingeniería.
-            </p>
+<div class="relative flex h-screen w-full flex-col overflow-hidden max-w-md bg-white shadow-2xl">
+    
+    <header class="bg-[#004D40] text-white p-4 shrink-0 shadow-md">
+        <div class="flex items-center gap-3 mb-4">
+            <div class="size-12 rounded-full border-2 border-[#11d4c4] bg-white/20 flex items-center justify-center overflow-hidden">
+                <span class="material-symbols-outlined text-3xl">account_circle</span>
+            </div>
+            <div>
+                <h2 class="text-base font-bold leading-tight">Geraldine Cárdenas</h2>
+                <p class="text-xs text-[#11d4c4] font-medium">Ingeniería & Estrategia de Valor</p>
+            </div>
         </div>
+        <div class="bg-white/10 rounded-xl p-3 backdrop-blur-sm">
+            <p class="text-xs font-semibold mb-1">¡Hola! Soy Gery tu Mentora de Productividad con IA 🤖</p>
+            <p class="text-[10px] text-slate-200 uppercase tracking-tight">Optimiza tu tiempo, maximiza tu valor.</p>
+        </div>
+    </header>
 
-        <div id="chat-box" class="chat-container space-y-4 mb-4 p-2"></div>
+    <main id="chat-box" class="chat-area flex-1 p-4 space-y-6 bg-slate-50">
+        <div class="flex flex-col items-center py-6 opacity-40">
+            <span class="material-symbols-outlined text-4xl mb-2 text-[#004D40]">smart_toy</span>
+            <p class="text-[10px] text-center px-10">Hoy es un gran día para ser productiva. ¿Qué planes tienes?</p>
+        </div>
     </main>
 
-<footer class="p-4 bg-white border-t border-gray-200 sticky bottom-0">
-    <div class="max-w-2xl mx-auto flex gap-2">
-        <input type="text" id="user-input" placeholder="Ej: Tengo muchas tareas, ¿cómo priorizo?" 
-               class="flex-grow border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#5DC1B9]">
-        <button onclick="sendMessage()" id="send-btn" class="text-white px-6 py-2 rounded-lg font-bold transition" style="background-color: var(--primary);">
-            Enviar
-        </button>
-    </div>
-    
-    <div class="text-center mt-3">
-        <p class="text-[10px] text-gray-400 uppercase tracking-widest">
-            Powered by: 
-            <a href="https://www.instagram.com/mirlo.digital/" target="_blank" class="font-bold hover:text-[#5DC1B9] transition-colors" style="color: var(--primary);">
-                @mirlodigital
-            </a>
-        </p>
-    </div>
-</footer>
+    <footer class="bg-white border-t border-slate-100 p-4">
+        <div class="flex flex-col gap-3">
+            <div class="flex items-center gap-2">
+                <input type="text" id="user-input" 
+                       class="flex-1 bg-slate-100 border-none rounded-full py-3 px-5 text-sm focus:ring-2 focus:ring-[#11d4c4]" 
+                       placeholder="Ej: Tengo muchas tareas...">
+                <button onclick="sendMessage()" class="bg-[#004D40] text-white size-11 rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-all">
+                    <span class="material-symbols-outlined">send</span>
+                </button>
+            </div>
+            <div class="text-center">
+                <p class="text-[9px] font-bold text-slate-400 tracking-widest uppercase">
+                    POWERED BY: <a href="https://www.instagram.com/mirlo.digital/" target="_blank" class="text-[#11d4c4]">@MIRLODIGITAL</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+</div>
 
 <script>
     async function sendMessage() {
@@ -121,42 +102,43 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: message })
             });
-            
             const data = await response.json();
             
-            // Eliminamos el "pensando..."
-            document.getElementById(typingId)?.closest('.message-wrapper').remove();
+            const typingElem = document.getElementById(typingId);
+            if (typingElem) typingElem.closest('.message-row').remove();
             
             if (response.ok && data.text) {
                 appendMessage('ai', data.text);
             } else {
-                appendMessage('ai', "⚠️ Error técnico: " + (data.detail || data.error));
+                appendMessage('ai', "⚠️ Error: " + (data.error || "No response"));
             }
         } catch (error) {
-            document.getElementById(typingId)?.closest('.message-wrapper').remove();
-            appendMessage('ai', "❌ Error de red: No pude contactar con el servidor.");
+            console.error(error);
         }
     }
 
     function appendMessage(sender, text, id = null) {
         const chatBox = document.getElementById('chat-box');
-        const wrapper = document.createElement('div');
-        wrapper.className = `message-wrapper flex ${sender === 'user' ? 'justify-end' : 'justify-start'} mb-4`;
+        const row = document.createElement('div');
+        row.className = `message-row flex items-end gap-2 ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
         
-        // 3. CAMBIO CLAVE: Usamos marked.parse para convertir el texto a HTML con tablas
-        // También añadimos la clase 'prose' para que Tailwind aplique estilos de texto
         const content = sender === 'ai' && text !== '...' ? marked.parse(text) : text;
+        const bubbleClass = sender === 'user' 
+            ? 'bg-[#ede7f6] text-[#004D40] rounded-2xl rounded-tr-none' 
+            : 'bg-white border border-slate-100 rounded-2xl rounded-tl-none';
 
-        wrapper.innerHTML = `
-            <div ${id ? `id="${id}"` : ''} class="prose max-w-[85%] p-3 rounded-lg shadow-sm ${
-                sender === 'user' 
-                ? 'bg-indigo-600 text-white' 
-                : 'bg-white border border-gray-200 text-gray-800'
-            } text-sm">
-                ${content}
+        row.innerHTML = `
+            ${sender === 'ai' ? '<div class="size-7 rounded-full bg-[#004D40] flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-white text-[16px]">robot_2</span></div>' : ''}
+            <div class="flex flex-col gap-1 max-w-[85%]">
+                <span class="text-[9px] font-bold text-slate-400 uppercase px-1">${sender === 'user' ? 'Tú' : 'Gery'}</span>
+                <div ${id ? `id="${id}"` : ''} class="prose prose-sm px-4 py-3 shadow-sm ${bubbleClass} text-sm">
+                    ${content}
+                </div>
             </div>
+            ${sender === 'user' ? '<div class="size-7 rounded-full bg-slate-200 shrink-0 flex items-center justify-center"><span class="material-symbols-outlined text-slate-400 text-[16px]">person</span></div>' : ''}
         `;
-        chatBox.appendChild(wrapper);
+        
+        chatBox.appendChild(row);
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 </script>
