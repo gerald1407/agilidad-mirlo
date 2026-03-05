@@ -16,60 +16,63 @@
         }
         body { font-family: 'Inter', sans-serif; background-color: #f6f8f8; }
         
+        /* Contenedor del chat con altura adaptable */
         .chat-area { height: calc(100svh - 260px); overflow-y: auto; scroll-behavior: smooth; }
 
+        /* Estilos de Markdown para Gery */
         .prose h3 { 
-            font-size: 0.9rem !important; 
+            font-size: 0.95rem !important; 
             font-weight: 700; 
-            margin: 15px 0 8px 0;
+            margin: 18px 0 10px 0;
             display: flex; 
             align-items: center; 
             gap: 8px;
             color: var(--deep-teal);
         }
-        .prose table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 0.8rem; background: white; border-radius: 8px; overflow: hidden; }
-        .prose th { background: var(--deep-teal); color: white; padding: 8px; }
-        .prose td { border: 1px solid #e2e8f0; padding: 8px; }
+        .prose table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.85rem; background: white; border-radius: 8px; overflow: hidden; }
+        .prose th { background: var(--deep-teal); color: white; padding: 10px; text-align: left; }
+        .prose td { border: 1px solid #e2e8f0; padding: 10px; }
         .prose blockquote { 
             background: #f0fdfa; border-left: 4px solid var(--primary); 
-            padding: 12px; margin: 15px 0; border-radius: 4px; font-style: italic; color: var(--deep-teal);
+            padding: 14px; margin: 16px 0; border-radius: 4px; font-style: italic; color: var(--deep-teal);
         }
         
+        /* Interactividad de Métodos */
         .method-link {
             cursor: pointer;
             text-decoration: underline;
             text-underline-offset: 3px;
             color: var(--deep-teal);
-            font-weight: 600;
+            font-weight: 700;
         }
         .method-link:hover { color: var(--primary); }
 
         .explanation-row {
             background-color: #f0fdfa !important;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             color: #065f46;
             animation: fadeIn 0.3s ease-in;
         }
 
-        /* Estilo del Botón WhatsApp */
+        /* Botón WhatsApp Estilizado */
         .whatsapp-btn {
             display: flex;
             align-items: center;
             gap: 8px;
             background-color: #25D366;
             color: white !important;
-            padding: 8px 14px;
-            border-radius: 12px;
+            padding: 10px 18px;
+            border-radius: 14px;
             font-size: 13px;
             font-weight: 600;
             transition: all 0.2s ease;
             border: none;
             cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin-top: 10px;
+            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.2);
+            margin-top: 12px;
             width: fit-content;
         }
-        .whatsapp-btn:hover { background-color: #1ebe57; transform: scale(1.03); }
+        .whatsapp-btn:hover { background-color: #1ebe57; transform: translateY(-2px); }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
@@ -77,7 +80,7 @@
 <body class="bg-slate-100 flex justify-center">
 
 <div class="relative flex h-screen w-full flex-col overflow-hidden max-w-md bg-white shadow-2xl">
-    <header class="bg-[#004D40] text-white p-4 shrink-0 shadow-md">
+    <header class="bg-[#004D40] text-white p-5 shrink-0 shadow-md">
         <div class="flex items-center gap-3 mb-4">
             <div class="size-12 rounded-full border-2 border-[#11d4c4] bg-white/20 flex items-center justify-center overflow-hidden">
                 <span class="material-symbols-outlined text-3xl">account_circle</span>
@@ -88,15 +91,15 @@
             </div>
         </div>
         <div class="bg-white/10 rounded-xl p-3 backdrop-blur-sm">
-            <p class="text-xs font-semibold mb-1">¡Hola! Soy Gery tu Mentora de Productividad con IA 🤖</p>
-            <p class="text-[10px] text-slate-200 uppercase tracking-tight">Optimiza tu tiempo, maximiza tu valor.</p>
+            <p class="text-xs font-semibold mb-1">¡Hola! Soy Gery, tu Mentora de Productividad con IA 🤖</p>
+            <p class="text-[10px] text-slate-200 uppercase tracking-widest">Optimiza tu tiempo, maximiza tu valor.</p>
         </div>
     </header>
 
     <main id="chat-box" class="chat-area flex-1 p-4 space-y-6 bg-slate-50">
-        <div class="flex flex-col items-center py-6 opacity-40">
-            <span class="material-symbols-outlined text-4xl mb-2 text-[#004D40]">smart_toy</span>
-            <p class="text-[10px] text-center px-10">Hoy es un gran día para ser productiva. ¿Qué planes tienes?</p>
+        <div class="flex flex-col items-center py-10 opacity-40">
+            <span class="material-symbols-outlined text-5xl mb-3 text-[#004D40]">smart_toy</span>
+            <p class="text-xs text-center px-10">Define tus objetivos de hoy. Gery te ayudará a priorizarlos con ingeniería.</p>
         </div>
     </main>
 
@@ -104,9 +107,9 @@
         <div class="flex flex-col gap-3">
             <div class="flex items-center gap-2">
                 <input type="text" id="user-input" 
-                       class="flex-1 bg-slate-100 border-none rounded-full py-3 px-5 text-sm focus:ring-2 focus:ring-[#11d4c4]" 
-                       placeholder="Ej: Tengo muchas tareas...">
-                <button onclick="sendMessage()" class="bg-[#004D40] text-white size-11 rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-all">
+                       class="flex-1 bg-slate-100 border-none rounded-full py-3 px-6 text-sm focus:ring-2 focus:ring-[#11d4c4] outline-none" 
+                       placeholder="Escribe tus tareas o cómo te sientes...">
+                <button onclick="sendMessage()" class="bg-[#004D40] text-white size-12 rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-all">
                     <span class="material-symbols-outlined">send</span>
                 </button>
             </div>
@@ -115,3 +118,147 @@
                     POWERED BY: <a href="https://www.instagram.com/mirlo.digital/" target="_blank" class="text-[#11d4c4]">@MIRLODIGITAL</a>
                 </p>
             </div>
+        </div>
+    </footer>
+</div>
+
+<script>
+    // 1. Envío de Mensajes
+    async function sendMessage() {
+        const inputField = document.getElementById('user-input');
+        const sendButton = inputField.nextElementSibling;
+        const message = inputField.value.trim();
+        
+        if (!message) return;
+
+        inputField.disabled = true;
+        sendButton.disabled = true;
+        sendButton.style.opacity = "0.5";
+
+        appendMessage('user', message);
+        inputField.value = '';
+
+        const typingId = 'typing-' + Date.now();
+        appendMessage('ai', '...', typingId);
+
+        try {
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: message })
+            });
+            const data = await response.json();
+            
+            const typingElem = document.getElementById(typingId);
+            if (typingElem) typingElem.closest('.message-row').remove();
+            
+            if (response.ok) {
+                appendMessage('ai', data.text || "⚠️ Gery tuvo un hipo técnico.");
+            } else {
+                appendMessage('ai', "⚠️ Error: " + (data.error || "No se pudo conectar."));
+            }
+        } catch (error) {
+            const typingElem = document.getElementById(typingId);
+            if (typingElem) typingElem.closest('.message-row').remove();
+            appendMessage('ai', "⚠️ Revisa tu conexión a internet.");
+        } finally {
+            inputField.disabled = false;
+            sendButton.disabled = false;
+            sendButton.style.opacity = "1";
+            inputField.focus();
+        }
+    }
+
+    // 2. Renderizado de Mensajes
+    function appendMessage(sender, text, id = null) {
+        const chatBox = document.getElementById('chat-box');
+        const row = document.createElement('div');
+        row.className = `message-row flex items-end gap-2 mb-6 ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
+        
+        let content = (sender === 'ai' && text !== '...') ? marked.parse(text) : text;
+        
+        // Inyectar interactividad en la tabla de Gery
+        if (sender === 'ai' && text !== '...') {
+            content = content
+                .replace(/Pomodoro/g, '<span class="method-link" onclick="toggleExplanation(this, \'pomodoro\')">Pomodoro</span>')
+                .replace(/Pareto/g, '<span class="method-link" onclick="toggleExplanation(this, \'pareto\')">Pareto</span>')
+                .replace(/Parkinson/g, '<span class="method-link" onclick="toggleExplanation(this, \'parkinson\')">Parkinson</span>')
+                .replace(/Bienestar/g, '<span class="method-link" onclick="toggleExplanation(this, \'bienestar\')">Bienestar</span>');
+        }
+
+        const bubbleClass = sender === 'user' 
+            ? 'bg-[#ede7f6] text-[#004D40] rounded-2xl rounded-tr-none shadow-sm' 
+            : 'bg-white border border-slate-100 rounded-2xl rounded-tl-none shadow-sm';
+
+        row.innerHTML = `
+            ${sender === 'ai' ? '<div class="size-8 rounded-full bg-[#004D40] flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-white text-[18px]">smart_toy</span></div>' : ''}
+            <div class="flex flex-col gap-1 max-w-[85%]">
+                <span class="text-[9px] font-bold text-slate-400 uppercase px-2">${sender === 'user' ? 'Tú' : 'Gery'}</span>
+                <div ${id ? `id="${id}"` : ''} class="prose prose-sm px-4 py-3 ${bubbleClass} text-sm leading-relaxed">
+                    ${content}
+                </div>
+            </div>
+            ${sender === 'user' ? '<div class="size-8 rounded-full bg-slate-200 shrink-0 flex items-center justify-center"><span class="material-symbols-outlined text-slate-400 text-[18px]">person</span></div>' : ''}
+        `;
+        
+        // Botón WhatsApp al final de la respuesta de Gery
+        if (sender === 'ai' && text !== '...') {
+            const btnContainer = document.createElement('div');
+            const escapedText = text.replace(/`/g, "\\`").replace(/\$/g, "\\$");
+            btnContainer.innerHTML = `
+                <button onclick="shareToWhatsApp(\`${escapedText}\`)" class="whatsapp-btn">
+                    <span class="material-symbols-outlined !text-[18px]">share</span>
+                    Enviar a mi WhatsApp
+                </button>
+            `;
+            row.querySelector('.flex-col').appendChild(btnContainer);
+        }
+
+        chatBox.appendChild(row);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // 3. Lógica de Tabla Interactiva
+    function toggleExplanation(element, method) {
+        const tableRow = element.closest('tr');
+        const nextRow = tableRow.nextElementSibling;
+        
+        if (nextRow && nextRow.classList.contains('explanation-row')) {
+            nextRow.remove();
+            return;
+        }
+
+        const explanations = {
+            pomodoro: "⏱️ **Método Pomodoro:** Trabaja 25 min y descansa 5. Ideal para mantener el enfoque sin quemarte.",
+            pareto: "🎯 **Regla 80/20:** Identifica el 20% de tareas que generan el 80% de tus resultados. ¡Haz lo vital!",
+            parkinson: "⏳ **Ley de Parkinson:** La tarea se expande hasta llenar el tiempo disponible. Ponle un límite real.",
+            bienestar: "🌿 **Pilar de Bienestar:** Bloque innegociable de recarga. Sin combustible, la ingeniera no funciona."
+        };
+
+        const newRow = document.createElement('tr');
+        newRow.className = 'explanation-row';
+        newRow.innerHTML = `<td colspan="4" class="p-3 border-l-4 border-[#11d4c4] bg-[#f0fdfa]">${marked.parse(explanations[method])}</td>`;
+        tableRow.parentNode.insertBefore(newRow, tableRow.nextSibling);
+    }
+
+    // 4. Compartir en WhatsApp
+    function shareToWhatsApp(text) {
+        let cleanText = text
+            .replace(/###/g, '*') // Negritas para WA
+            .replace(/\*/g, '•')  // Viñetas
+            .replace(/\|/g, '')   // Limpiar tablas
+            .replace(/>/g, '');   // Limpiar citas
+
+        const intro = "*📍 MI PLAN ESTRATÉGICO CON GERY*\n_Optimiza tu tiempo, maximiza tu valor._\n\n";
+        const url = `https://wa.me/?text=${encodeURIComponent(intro + cleanText)}`;
+        window.open(url, '_blank');
+    }
+
+    // Soporte para tecla Enter
+    document.getElementById('user-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
+    });
+</script>
+
+</body>
+</html>
