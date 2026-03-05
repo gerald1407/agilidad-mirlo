@@ -87,8 +87,15 @@
 <script>
     async function sendMessage() {
         const inputField = document.getElementById('user-input');
+        const sendButton = inputField.nextElementSibling; // El botón de enviar
         const message = inputField.value.trim();
+        
         if (!message) return;
+
+        // Desactivar interfaz mientras procesa
+        inputField.disabled = true;
+        sendButton.disabled = true;
+        sendButton.style.opacity = "0.5";
 
         appendMessage('user', message);
         inputField.value = '';
@@ -102,27 +109,49 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: message })
             });
+
             const data = await response.json();
             
+            // Eliminar burbuja de carga
             const typingElem = document.getElementById(typingId);
             if (typingElem) typingElem.closest('.message-row').remove();
             
-            if (response.ok && data.text) {
-                appendMessage('ai', data.text);
+            if (response.ok) {
+                if (data.text) {
+                    appendMessage('ai', data.text);
+                } else {
+                    appendMessage('ai', "⚠️ Gery no pudo generar una respuesta. Intenta de nuevo.");
+                }
             } else {
-                appendMessage('ai', "⚠️ Error: " + (data.error || "No response"));
+                // Manejo específico de saturación (Error 429)
+                if (response.status === 429) {
+                    appendMessage('ai', "⚠️ ¡Gery está a tope! Estamos en vivo y hay muchas consultas. Por favor, espera 10 segundos y reintenta.");
+                } else {
+                    appendMessage('ai', "⚠️ Error: " + (data.error || "No se pudo conectar."));
+                }
             }
         } catch (error) {
-            console.error(error);
+            console.error("Error en el chat:", error);
+            // Si la burbuja de carga sigue ahí por un error de red, la quitamos
+            const typingElem = document.getElementById(typingId);
+            if (typingElem) typingElem.closest('.message-row').remove();
+            appendMessage('ai', "⚠️ Hubo un problema de conexión. Revisa tu internet.");
+        } finally {
+            // Reactivar interfaz
+            inputField.disabled = false;
+            sendButton.disabled = false;
+            sendButton.style.opacity = "1";
+            inputField.focus();
         }
     }
 
     function appendMessage(sender, text, id = null) {
         const chatBox = document.getElementById('chat-box');
         const row = document.createElement('div');
-        row.className = `message-row flex items-end gap-2 ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
+        row.className = `message-row flex items-end gap-2 mb-6 ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
         
-        const content = sender === 'ai' && text !== '...' ? marked.parse(text) : text;
+        // Solo parsear Markdown si no es la burbuja de carga
+        const content = (sender === 'ai' && text !== '...') ? marked.parse(text) : text;
         const bubbleClass = sender === 'user' 
             ? 'bg-[#ede7f6] text-[#004D40] rounded-2xl rounded-tr-none' 
             : 'bg-white border border-slate-100 rounded-2xl rounded-tl-none';
