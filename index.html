@@ -229,11 +229,19 @@
         tableRow.parentNode.insertBefore(newRow, tableRow.nextSibling);
     }
 
-    function shareToWhatsApp(text) {
-        const clean = text.replace(/###/g, '*').replace(/\|/g, '').replace(/>/g, '');
-        const intro = "*📍 MI PLAN CON GERY*\n\n";
-        window.open(`https://wa.me/?text=${encodeURIComponent(intro + clean)}`, '_blank');
-    }
+function shareToWhatsApp(text) {
+    // Limpieza profunda para que el mensaje de WhatsApp sea legible
+    let cleanText = text
+        .replace(/###/g, '*')      // Convierte títulos en negritas de WA
+        .replace(/\|/g, ' ')       // Quita las barras de la tabla
+        .replace(/>/g, '')         // Quita los símbolos de cita
+        .replace(/--+/g, '')       // Quita las líneas divisorias de la tabla
+        .trim();
+
+    const header = "*📍 MI PLAN ESTRATÉGICO CON GERY*\n_Ingeniería de Valor para hoy_\n\n";
+    const url = `https://wa.me/?text=${encodeURIComponent(header + cleanText)}`;
+    window.open(url, '_blank');
+}
 </script>
 </body>
 </html>
