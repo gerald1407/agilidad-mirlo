@@ -161,54 +161,61 @@
         }
     }
 
-    function appendMessage(sender, text, id = null) {
-        const chatBox = document.getElementById('chat-box');
-        const row = document.createElement('div');
-        
-        // Ajuste de layout: Gery arriba del mensaje, usuario a la derecha
-        row.className = `message-row flex flex-col mb-6 ${sender === 'user' ? 'items-end' : 'items-start'}`;
-        
-        let content = (sender === 'ai' && text !== '...') ? marked.parse(text) : text;
-        
-        if (sender === 'ai' && text !== '...') {
-            // Regex mejorada para detectar palabras clave incluso con emojis cerca
-            const methods = ['Pomodoro', 'Pareto', 'Parkinson', 'Bienestar'];
-            methods.forEach(m => {
-                const regex = new RegExp(`\\b${m}\\b`, 'gi');
-                content = content.replace(regex, `<span class="method-link" onclick="toggleExplanation(this, '${m.toLowerCase()}')">${m}</span>`);
-            });
-        }
-
-        const bubbleClass = sender === 'user' 
-            ? 'bg-[#ede7f6] text-[#004D40] rounded-2xl rounded-tr-none' 
-            : 'bg-white border border-slate-100 rounded-2xl rounded-tl-none';
-
-        row.innerHTML = `
-            ${sender === 'ai' ? `
-                <div class="flex items-center gap-2 mb-1 ml-1">
-                    <div class="size-6 rounded-full bg-[#004D40] flex items-center justify-center">
-                        <span class="material-symbols-outlined text-white text-[14px]">smart_toy</span>
-                    </div>
-                    <span class="text-[9px] font-bold text-slate-400 uppercase">Gery</span>
-                </div>
-            ` : `<span class="text-[9px] font-bold text-slate-400 uppercase px-2 mb-1">Tú</span>`}
-            
-            <div class="max-w-[100%] w-full">
-                <div ${id ? `id="${id}"` : ''} class="prose prose-sm px-3 py-3 shadow-sm ${bubbleClass} text-[13px] w-full overflow-x-hidden">
-                    ${content}
-                </div>
-                ${sender === 'ai' && text !== '...' ? `
-                    <button onclick="shareToWhatsApp(\`${text.replace(/`/g, "'")}\`)" class="whatsapp-btn">
-                        <span class="material-symbols-outlined !text-[16px]">share</span>
-                        Compartir Plan
-                    </button>
-                ` : ''}
-            </div>
-        `;
-        
-        chatBox.appendChild(row);
-        chatBox.scrollTop = chatBox.scrollHeight;
+function appendMessage(sender, text, id = null) {
+    const chatBox = document.getElementById('chat-box');
+    const row = document.createElement('div');
+    
+    row.className = `message-row flex flex-col mb-6 ${sender === 'user' ? 'items-end' : 'items-start'}`;
+    
+    let content = (sender === 'ai' && text !== '...') ? marked.parse(text) : text;
+    
+    if (sender === 'ai' && text !== '...') {
+        const methods = ['Pomodoro', 'Pareto', 'Parkinson', 'Bienestar'];
+        methods.forEach(m => {
+            const regex = new RegExp(`\\b${m}\\b`, 'gi');
+            content = content.replace(regex, `<span class="method-link" onclick="toggleExplanation(this, '${m.toLowerCase()}')">${m}</span>`);
+        });
     }
+
+    const bubbleClass = sender === 'user' 
+        ? 'bg-[#ede7f6] text-[#004D40] rounded-2xl rounded-tr-none' 
+        : 'bg-white border border-slate-100 rounded-2xl rounded-tl-none';
+
+    // Construimos la estructura básica
+    row.innerHTML = `
+        ${sender === 'ai' ? `
+            <div class="flex items-center gap-2 mb-1 ml-1">
+                <div class="size-6 rounded-full bg-[#004D40] flex items-center justify-center">
+                    <span class="material-symbols-outlined text-white text-[14px]">smart_toy</span>
+                </div>
+                <span class="text-[9px] font-bold text-slate-400 uppercase">Gery</span>
+            </div>
+        ` : `<span class="text-[9px] font-bold text-slate-400 uppercase px-2 mb-1">Tú</span>`}
+        
+        <div class="max-w-[100%] w-full bubble-container">
+            <div ${id ? `id="${id}"` : ''} class="prose prose-sm px-3 py-3 shadow-sm ${bubbleClass} text-[13px] w-full overflow-x-hidden">
+                ${content}
+            </div>
+        </div>
+    `;
+
+    // AGREGAMOS EL BOTÓN DE WHATSAPP DE FORMA SEGURA (Sin inyectar texto en el HTML)
+    if (sender === 'ai' && text !== '...') {
+        const btn = document.createElement('button');
+        btn.className = "whatsapp-btn";
+        btn.innerHTML = `<span class="material-symbols-outlined !text-[16px]">share</span> Compartir Plan`;
+        
+        // Aquí pasamos el texto de forma segura sin que las comillas lo rompan
+        btn.onclick = function() {
+            shareToWhatsApp(text);
+        };
+        
+        row.querySelector('.bubble-container').appendChild(btn);
+    }
+    
+    chatBox.appendChild(row);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
 
     function toggleExplanation(element, method) {
         const tableRow = element.closest('tr');
@@ -230,17 +237,16 @@
     }
 
 function shareToWhatsApp(text) {
-    // Limpieza profunda para que el mensaje de WhatsApp sea legible
-    let cleanText = text
-        .replace(/###/g, '*')      // Convierte títulos en negritas de WA
-        .replace(/\|/g, ' ')       // Quita las barras de la tabla
-        .replace(/>/g, '')         // Quita los símbolos de cita
-        .replace(/--+/g, '')       // Quita las líneas divisorias de la tabla
+    // Eliminamos caracteres técnicos para que en WhatsApp sea solo texto legible
+    let clean = text
+        .replace(/###/g, '*') // Títulos a negritas
+        .replace(/\|/g, ' ')  // Quitar barras de tabla
+        .replace(/>/g, '')    // Quitar citas
+        .replace(/🟢|🔵|🔴/g, (match) => match + ' ') // Espacio después de emoji
         .trim();
 
-    const header = "*📍 MI PLAN ESTRATÉGICO CON GERY*\n_Ingeniería de Valor para hoy_\n\n";
-    const url = `https://wa.me/?text=${encodeURIComponent(header + cleanText)}`;
-    window.open(url, '_blank');
+    const intro = "*📍 MI PLAN ESTRATÉGICO CON GERY*\n\n";
+    window.open(`https://wa.me/?text=${encodeURIComponent(intro + clean)}`, '_blank');
 }
 </script>
 </body>
