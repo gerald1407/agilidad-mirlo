@@ -16,63 +16,58 @@
         }
         body { font-family: 'Inter', sans-serif; background-color: #f6f8f8; }
         
-        /* Contenedor del chat con altura adaptable */
         .chat-area { height: calc(100svh - 260px); overflow-y: auto; scroll-behavior: smooth; }
 
-        /* Estilos de Markdown para Gery */
+        /* --- REINGENIERÍA DE TABLAS PARA MÓVIL --- */
+        .prose table { 
+            width: 100% !important; 
+            margin: 12px 0; 
+            font-size: 0.75rem; 
+            background: white; 
+            border-radius: 8px; 
+            overflow: hidden;
+            table-layout: fixed; /* Fuerza a respetar el ancho del contenedor */
+        }
+        .prose th { background: var(--deep-teal); color: white; padding: 8px 4px; text-align: left; }
+        .prose td { border: 1px solid #e2e8f0; padding: 8px 4px; word-wrap: break-word; }
+        
+        /* Anchos específicos de columnas para evitar desbordamiento */
+        .prose th:nth-child(1), .prose td:nth-child(1) { width: 18%; } /* Hora */
+        .prose th:nth-child(2), .prose td:nth-child(2) { width: 35%; } /* Actividad */
+        .prose th:nth-child(3), .prose td:nth-child(3) { width: 22%; } /* Prioridad */
+        .prose th:nth-child(4), .prose td:nth-child(4) { width: 25%; } /* Método */
+
         .prose h3 { 
-            font-size: 0.95rem !important; 
+            font-size: 0.9rem !important; 
             font-weight: 700; 
-            margin: 18px 0 10px 0;
+            margin: 15px 0 8px 0;
             display: flex; 
             align-items: center; 
-            gap: 8px;
+            gap: 6px;
             color: var(--deep-teal);
         }
-        .prose table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.85rem; background: white; border-radius: 8px; overflow: hidden; }
-        .prose th { background: var(--deep-teal); color: white; padding: 10px; text-align: left; }
-        .prose td { border: 1px solid #e2e8f0; padding: 10px; }
+        
         .prose blockquote { 
             background: #f0fdfa; border-left: 4px solid var(--primary); 
-            padding: 14px; margin: 16px 0; border-radius: 4px; font-style: italic; color: var(--deep-teal);
+            padding: 12px; margin: 15px 0; border-radius: 4px; font-style: italic; color: var(--deep-teal);
         }
         
-        /* Interactividad de Métodos */
         .method-link {
             cursor: pointer;
             text-decoration: underline;
-            text-underline-offset: 3px;
+            text-underline-offset: 2px;
             color: var(--deep-teal);
             font-weight: 700;
         }
-        .method-link:hover { color: var(--primary); }
 
-        .explanation-row {
-            background-color: #f0fdfa !important;
-            font-size: 0.8rem;
-            color: #065f46;
-            animation: fadeIn 0.3s ease-in;
-        }
+        .explanation-row { background-color: #f0fdfa !important; font-size: 0.75rem; color: #065f46; }
 
-        /* Botón WhatsApp Estilizado */
         .whatsapp-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background-color: #25D366;
-            color: white !important;
-            padding: 10px 18px;
-            border-radius: 14px;
-            font-size: 13px;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.2);
-            margin-top: 12px;
-            width: fit-content;
+            display: flex; align-items: center; gap: 6px;
+            background-color: #25D366; color: white !important;
+            padding: 8px 14px; border-radius: 12px;
+            font-size: 12px; font-weight: 600; margin-top: 10px; width: fit-content;
         }
-        .whatsapp-btn:hover { background-color: #1ebe57; transform: translateY(-2px); }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
@@ -108,7 +103,7 @@
             <div class="flex items-center gap-2">
                 <input type="text" id="user-input" 
                        class="flex-1 bg-slate-100 border-none rounded-full py-3 px-6 text-sm focus:ring-2 focus:ring-[#11d4c4] outline-none" 
-                       placeholder="Escribe tus tareas o cómo te sientes...">
+                       placeholder="Escribe tus tareas...">
                 <button onclick="sendMessage()" class="bg-[#004D40] text-white size-12 rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-all">
                     <span class="material-symbols-outlined">send</span>
                 </button>
@@ -123,12 +118,10 @@
 </div>
 
 <script>
-    // 1. Envío de Mensajes
     async function sendMessage() {
         const inputField = document.getElementById('user-input');
         const sendButton = inputField.nextElementSibling;
         const message = inputField.value.trim();
-        
         if (!message) return;
 
         inputField.disabled = true;
@@ -148,19 +141,18 @@
                 body: JSON.stringify({ message: message })
             });
             const data = await response.json();
-            
             const typingElem = document.getElementById(typingId);
             if (typingElem) typingElem.closest('.message-row').remove();
             
             if (response.ok) {
-                appendMessage('ai', data.text || "⚠️ Gery tuvo un hipo técnico.");
+                appendMessage('ai', data.text);
             } else {
-                appendMessage('ai', "⚠️ Error: " + (data.error || "No se pudo conectar."));
+                appendMessage('ai', "⚠️ Error: " + (data.error || "Falla de red."));
             }
         } catch (error) {
             const typingElem = document.getElementById(typingId);
             if (typingElem) typingElem.closest('.message-row').remove();
-            appendMessage('ai', "⚠️ Revisa tu conexión a internet.");
+            appendMessage('ai', "⚠️ Revisa tu conexión.");
         } finally {
             inputField.disabled = false;
             sendButton.disabled = false;
@@ -169,96 +161,79 @@
         }
     }
 
-    // 2. Renderizado de Mensajes
     function appendMessage(sender, text, id = null) {
         const chatBox = document.getElementById('chat-box');
         const row = document.createElement('div');
-        row.className = `message-row flex items-end gap-2 mb-6 ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
+        
+        // Ajuste de layout: Gery arriba del mensaje, usuario a la derecha
+        row.className = `message-row flex flex-col mb-6 ${sender === 'user' ? 'items-end' : 'items-start'}`;
         
         let content = (sender === 'ai' && text !== '...') ? marked.parse(text) : text;
         
-        // Inyectar interactividad en la tabla de Gery
         if (sender === 'ai' && text !== '...') {
-            content = content
-                .replace(/Pomodoro/g, '<span class="method-link" onclick="toggleExplanation(this, \'pomodoro\')">Pomodoro</span>')
-                .replace(/Pareto/g, '<span class="method-link" onclick="toggleExplanation(this, \'pareto\')">Pareto</span>')
-                .replace(/Parkinson/g, '<span class="method-link" onclick="toggleExplanation(this, \'parkinson\')">Parkinson</span>')
-                .replace(/Bienestar/g, '<span class="method-link" onclick="toggleExplanation(this, \'bienestar\')">Bienestar</span>');
+            // Regex mejorada para detectar palabras clave incluso con emojis cerca
+            const methods = ['Pomodoro', 'Pareto', 'Parkinson', 'Bienestar'];
+            methods.forEach(m => {
+                const regex = new RegExp(`\\b${m}\\b`, 'gi');
+                content = content.replace(regex, `<span class="method-link" onclick="toggleExplanation(this, '${m.toLowerCase()}')">${m}</span>`);
+            });
         }
 
         const bubbleClass = sender === 'user' 
-            ? 'bg-[#ede7f6] text-[#004D40] rounded-2xl rounded-tr-none shadow-sm' 
-            : 'bg-white border border-slate-100 rounded-2xl rounded-tl-none shadow-sm';
+            ? 'bg-[#ede7f6] text-[#004D40] rounded-2xl rounded-tr-none' 
+            : 'bg-white border border-slate-100 rounded-2xl rounded-tl-none';
 
         row.innerHTML = `
-            ${sender === 'ai' ? '<div class="size-8 rounded-full bg-[#004D40] flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-white text-[18px]">smart_toy</span></div>' : ''}
-            <div class="flex flex-col gap-1 max-w-[85%]">
-                <span class="text-[9px] font-bold text-slate-400 uppercase px-2">${sender === 'user' ? 'Tú' : 'Gery'}</span>
-                <div ${id ? `id="${id}"` : ''} class="prose prose-sm px-4 py-3 ${bubbleClass} text-sm leading-relaxed">
+            ${sender === 'ai' ? `
+                <div class="flex items-center gap-2 mb-1 ml-1">
+                    <div class="size-6 rounded-full bg-[#004D40] flex items-center justify-center">
+                        <span class="material-symbols-outlined text-white text-[14px]">smart_toy</span>
+                    </div>
+                    <span class="text-[9px] font-bold text-slate-400 uppercase">Gery</span>
+                </div>
+            ` : `<span class="text-[9px] font-bold text-slate-400 uppercase px-2 mb-1">Tú</span>`}
+            
+            <div class="max-w-[100%] w-full">
+                <div ${id ? `id="${id}"` : ''} class="prose prose-sm px-3 py-3 shadow-sm ${bubbleClass} text-[13px] w-full overflow-x-hidden">
                     ${content}
                 </div>
+                ${sender === 'ai' && text !== '...' ? `
+                    <button onclick="shareToWhatsApp(\`${text.replace(/`/g, "'")}\`)" class="whatsapp-btn">
+                        <span class="material-symbols-outlined !text-[16px]">share</span>
+                        Compartir Plan
+                    </button>
+                ` : ''}
             </div>
-            ${sender === 'user' ? '<div class="size-8 rounded-full bg-slate-200 shrink-0 flex items-center justify-center"><span class="material-symbols-outlined text-slate-400 text-[18px]">person</span></div>' : ''}
         `;
         
-        // Botón WhatsApp al final de la respuesta de Gery
-        if (sender === 'ai' && text !== '...') {
-            const btnContainer = document.createElement('div');
-            const escapedText = text.replace(/`/g, "\\`").replace(/\$/g, "\\$");
-            btnContainer.innerHTML = `
-                <button onclick="shareToWhatsApp(\`${escapedText}\`)" class="whatsapp-btn">
-                    <span class="material-symbols-outlined !text-[18px]">share</span>
-                    Enviar a mi WhatsApp
-                </button>
-            `;
-            row.querySelector('.flex-col').appendChild(btnContainer);
-        }
-
         chatBox.appendChild(row);
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    // 3. Lógica de Tabla Interactiva
     function toggleExplanation(element, method) {
         const tableRow = element.closest('tr');
         const nextRow = tableRow.nextElementSibling;
-        
         if (nextRow && nextRow.classList.contains('explanation-row')) {
             nextRow.remove();
             return;
         }
-
         const explanations = {
-            pomodoro: "⏱️ **Método Pomodoro:** Trabaja 25 min y descansa 5. Ideal para mantener el enfoque sin quemarte.",
-            pareto: "🎯 **Regla 80/20:** Identifica el 20% de tareas que generan el 80% de tus resultados. ¡Haz lo vital!",
-            parkinson: "⏳ **Ley de Parkinson:** La tarea se expande hasta llenar el tiempo disponible. Ponle un límite real.",
-            bienestar: "🌿 **Pilar de Bienestar:** Bloque innegociable de recarga. Sin combustible, la ingeniera no funciona."
+            pomodoro: "⏱️ **Pomodoro:** Foco total 25 min / Descanso 5 min.",
+            pareto: "🎯 **Pareto:** Prioriza el 20% que genera el 80% de valor.",
+            parkinson: "⏳ **Parkinson:** Asigna un tiempo límite para evitar que la tarea se extienda.",
+            bienestar: "🌿 **Bienestar:** Recarga necesaria para mantener tu rendimiento."
         };
-
         const newRow = document.createElement('tr');
         newRow.className = 'explanation-row';
         newRow.innerHTML = `<td colspan="4" class="p-3 border-l-4 border-[#11d4c4] bg-[#f0fdfa]">${marked.parse(explanations[method])}</td>`;
         tableRow.parentNode.insertBefore(newRow, tableRow.nextSibling);
     }
 
-    // 4. Compartir en WhatsApp
     function shareToWhatsApp(text) {
-        let cleanText = text
-            .replace(/###/g, '*') // Negritas para WA
-            .replace(/\*/g, '•')  // Viñetas
-            .replace(/\|/g, '')   // Limpiar tablas
-            .replace(/>/g, '');   // Limpiar citas
-
-        const intro = "*📍 MI PLAN ESTRATÉGICO CON GERY*\n_Optimiza tu tiempo, maximiza tu valor._\n\n";
-        const url = `https://wa.me/?text=${encodeURIComponent(intro + cleanText)}`;
-        window.open(url, '_blank');
+        const clean = text.replace(/###/g, '*').replace(/\|/g, '').replace(/>/g, '');
+        const intro = "*📍 MI PLAN CON GERY*\n\n";
+        window.open(`https://wa.me/?text=${encodeURIComponent(intro + clean)}`, '_blank');
     }
-
-    // Soporte para tecla Enter
-    document.getElementById('user-input').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendMessage();
-    });
 </script>
-
 </body>
 </html>
