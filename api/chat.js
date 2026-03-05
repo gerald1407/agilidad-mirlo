@@ -23,16 +23,16 @@ TU LEMA: "Optimiza tu tiempo, maximiza tu valor."
 
 REGLAS DE FORMATO INNEGOCIABLES:
 1. NUNCA uses ":" después de los títulos.
-2. Títulos con emoji pegado (Ej: ### 🟢Hazlas primero).
-3. Cada tarea DEBE empezar con un asterisco '*'.
-4. NO pongas emojis dentro de las oraciones de las listas.
+2. Títulos con encabezado H3 y emoji pegado (Ej: ### 🟢Hazlas primero).
+3. Cada tarea de las listas DEBE empezar con un asterisco '*'.
+4. NO pongas emojis dentro de las oraciones de las listas, solo en los títulos.
 
 LÓGICA DE INGENIERÍA:
-- El Almuerzo, Sueño y Descanso son SIEMPRE "🟢 Alta" y técnica "🌿 Bienestar". 
-- PROHIBIDO clasificar el descanso o comida como "🟡 Eliminar". Es un error de sistema.
+- El Almuerzo, Sueño y Descanso son SIEMPRE de Prioridad "🟢 Alta" y técnica "🌿 Bienestar". 
+- PROHIBIDO clasificar el descanso o comida como "🟡 Eliminar".
 
 ESTRUCTURA DE RESPUESTA:
-1. ANÁLISIS TÉCNICO: Breve y empático (⚙️, ✨).
+1. ANÁLISIS TÉCNICO: Comentario breve y empático con emojis ⚙️ y ✨.
 2. CLASIFICACIÓN (Usa listas con '*'):
    ### 🟢Hazlas primero
    ### 🔵Dedícales tiempo
@@ -40,22 +40,25 @@ ESTRUCTURA DE RESPUESTA:
    ### 🟡Elimina distracciones
 
 3. SPRINT DEL DÍA:
-   Escribe: "### 📅 Sprint del día: La ruta clara hacia tus objetivos"
+   Escribe el título: "### 📅 Sprint del día: La ruta clara hacia tus objetivos"
    Genera una Tabla Markdown: | Hora | Actividad | Prioridad | Método Sugerido |
-   - En "Prioridad" usa: 🟢 Alta, 🔵 Media, 🔴 Baja, 🟡 Eliminar.
-   - En "Método Sugerido" usa: ⏳ Pomodoro, 🎯 Pareto, ⏱️ Parkinson, 🌿 Bienestar.
+   - En "Prioridad" usa: 🟢 Alta, 🔵 Media, 🔴 Baja.
+   - En "Método Sugerido" usa solo estas opciones: ⏳ Pomodoro, 🎯 Pareto, ⏱️ Parkinson, 🌿 Bienestar.
 
 4. > 💡 **CONSEJO DE INGENIERÍA DE VALOR**
-> [Párrafo explicando una técnica]. Cierra con: Optimiza tu tiempo, maximiza tu valor.` 
+> [Párrafo explicando una técnica]. Cierra con la frase: Optimiza tu tiempo, maximiza tu valor.` 
           },
           { role: "user", content: message }
         ],
-        temperature: 0.3 // Bajamos a 0.3 para máxima obediencia y cero errores lógicos
+        temperature: 0.3
       })
     });
 
     const data = await response.json();
-    if (data.error) return res.status(500).json({ error: "Error de Groq", detail: data.error.message });
+
+    if (data.error) {
+      return res.status(500).json({ error: "Error de IA", detail: data.error.message });
+    }
 
     const aiResponse = data.choices[0].message.content;
     return res.status(200).json({ text: aiResponse });
