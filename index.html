@@ -171,30 +171,64 @@
     }
 
     function appendMessage(sender, text, id = null) {
-        const chatBox = document.getElementById('chat-box');
-        const row = document.createElement('div');
-        row.className = `message-row flex items-end gap-2 mb-6 ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
-        
-        // Solo parsear Markdown si no es la burbuja de carga
-        const content = (sender === 'ai' && text !== '...') ? marked.parse(text) : text;
-        const bubbleClass = sender === 'user' 
-            ? 'bg-[#ede7f6] text-[#004D40] rounded-2xl rounded-tr-none' 
-            : 'bg-white border border-slate-100 rounded-2xl rounded-tl-none';
-
-        row.innerHTML = `
-            ${sender === 'ai' ? '<div class="size-7 rounded-full bg-[#004D40] flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-white text-[16px]">robot_2</span></div>' : ''}
-            <div class="flex flex-col gap-1 max-w-[85%]">
-                <span class="text-[9px] font-bold text-slate-400 uppercase px-1">${sender === 'user' ? 'Tú' : 'Gery'}</span>
-                <div ${id ? `id="${id}"` : ''} class="prose prose-sm px-4 py-3 shadow-sm ${bubbleClass} text-sm">
-                    ${content}
-                </div>
-            </div>
-            ${sender === 'user' ? '<div class="size-7 rounded-full bg-slate-200 shrink-0 flex items-center justify-center"><span class="material-symbols-outlined text-slate-400 text-[16px]">person</span></div>' : ''}
-        `;
-        
-        chatBox.appendChild(row);
-        chatBox.scrollTop = chatBox.scrollHeight;
+    const chatBox = document.getElementById('chat-box');
+    const row = document.createElement('div');
+    row.className = `message-row flex items-end gap-2 mb-6 ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
+    
+    let content = (sender === 'ai' && text !== '...') ? marked.parse(text) : text;
+    
+    // Convertir los métodos en enlaces clickeables automáticamente
+    if (sender === 'ai' && text !== '...') {
+        content = content
+            .replace(/Pomodoro/g, '<span class="method-link" onclick="toggleExplanation(this, \'pomodoro\')">Pomodoro</span>')
+            .replace(/Pareto/g, '<span class="method-link" onclick="toggleExplanation(this, \'pareto\')">Pareto</span>')
+            .replace(/Parkinson/g, '<span class="method-link" onclick="toggleExplanation(this, \'parkinson\')">Parkinson</span>')
+            .replace(/Bienestar/g, '<span class="method-link" onclick="toggleExplanation(this, \'bienestar\')">Bienestar</span>');
     }
+
+    const bubbleClass = sender === 'user' 
+        ? 'bg-[#ede7f6] text-[#004D40] rounded-2xl rounded-tr-none' 
+        : 'bg-white border border-slate-100 rounded-2xl rounded-tl-none';
+
+    row.innerHTML = `
+        ${sender === 'ai' ? '<div class="size-7 rounded-full bg-[#004D40] flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-white text-[16px]">robot_2</span></div>' : ''}
+        <div class="flex flex-col gap-1 max-w-[85%]">
+            <span class="text-[9px] font-bold text-slate-400 uppercase px-1">${sender === 'user' ? 'Tú' : 'Gery'}</span>
+            <div ${id ? `id="${id}"` : ''} class="prose prose-sm px-4 py-3 shadow-sm ${bubbleClass} text-sm">
+                ${content}
+            </div>
+        </div>
+        ${sender === 'user' ? '<div class="size-7 rounded-full bg-slate-200 shrink-0 flex items-center justify-center"><span class="material-symbols-outlined text-slate-400 text-[16px]">person</span></div>' : ''}
+    `;
+    
+    chatBox.appendChild(row);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+// Nueva función para mostrar/ocultar la explicación en la tabla
+function toggleExplanation(element, method) {
+    const tableRow = element.closest('tr');
+    const nextRow = tableRow.nextElementSibling;
+    
+    // Si ya existe la fila de explicación, la quitamos (toggle)
+    if (nextRow && nextRow.classList.contains('explanation-row')) {
+        nextRow.remove();
+        return;
+    }
+
+    const explanations = {
+        pomodoro: "⏱️ **Pomodoro:** Trabaja 25 min y descansa 5. Mantén tu cerebro fresco y enfocado.",
+        pareto: "🎯 **Pareto (80/20):** Identifica el 20% de tus acciones que producen el 80% de tus resultados.",
+        parkinson: "⏳ **Parkinson:** Asigna tiempos límites. 'La tarea se expande hasta llenar el tiempo disponible'.",
+        bienestar: "🌿 **Bienestar:** Bloque sagrado para recargar energía. Sin descanso no hay productividad sostenible."
+    };
+
+    const newRow = document.createElement('tr');
+    newRow.className = 'explanation-row';
+    newRow.innerHTML = `<td colspan="4" style="padding: 10px; border-left: 4px solid #11d4c4;">${marked.parse(explanations[method])}</td>`;
+    
+    tableRow.parentNode.insertBefore(newRow, tableRow.nextSibling);
+}
 </script>
 </body>
 </html>
