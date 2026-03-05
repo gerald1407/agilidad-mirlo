@@ -36,6 +36,31 @@
             background: #f0fdfa; border-left: 4px solid var(--primary); 
             padding: 12px; margin: 15px 0; border-radius: 4px; font-style: italic; color: var(--deep-teal);
         }
+        /* Estilo para que los métodos parezcan interactivos */
+        .method-link {
+            cursor: pointer;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            color: var(--deep-teal);
+            font-weight: 600;
+        }
+        
+        .method-link:hover {
+            color: var(--primary);
+        }
+        
+        /* Fila de explicación con el color de fondo solicitado */
+        .explanation-row {
+            background-color: #f0fdfa !important;
+            font-size: 0.75rem;
+            color: #065f46;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
     </style>
 </head>
 <body class="bg-slate-100 flex justify-center">
