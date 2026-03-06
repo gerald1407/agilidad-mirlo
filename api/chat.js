@@ -39,7 +39,7 @@ export default async function handler(req, res) {
             3. SPRINT DEL DÍA (TABLA): | Hora | Actividad | Prioridad | Método |
                - Actividad: Máximo 3 palabras.
                - Método: Solo la palabra (Pomodoro, Pareto, Parkinson, Bienestar) sin emojis.
-            4. CONSEJO: > 💡 **CONSEJO DE INGENIERÍA DE VALOR** \n > [Texto] \n > Optimiza tu tiempo, maximiza tu valor.` 
+            4. CONSEJO: > 💡 **CONSEJO DE GERY PRODUCTIVA** \n > [Texto] \n > Optimiza tu tiempo, maximiza tu valor.
           },
           // 2. IMPORTANTE: Aquí inyectamos todo el historial que viene del chat
           ...messages 
