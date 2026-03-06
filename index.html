@@ -248,6 +248,13 @@ function shareToWhatsApp(text) {
     const intro = "*📍 MI PLAN ESTRATÉGICO CON GERY*\n\n";
     window.open(`https://wa.me/?text=${encodeURIComponent(intro + clean)}`, '_blank');
 }
+    window.onload = () => {
+    const bienvenidaGery = `Hola, espero que estés muy bien. ⚙️✨ 
+    
+¿Qué debes hacer hoy? Te ayudaré a organizar tu tiempo. Para empezar, por favor lístame tus tareas pendientes y dime **a qué hora inicia tu día**.`;
+    
+    appendMessage('ai', bienvenidaGery);
+};
 </script>
 </body>
 </html>
