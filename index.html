@@ -98,69 +98,94 @@
         </div>
     </main>
 
-    <footer class="bg-white border-t border-slate-100 p-4">
-        <div class="flex flex-col gap-3">
-            <div class="flex items-center gap-2">
-                <input type="text" id="user-input" 
-                       class="flex-1 bg-slate-100 border-none rounded-full py-3 px-6 text-sm focus:ring-2 focus:ring-[#11d4c4] outline-none" 
-                       placeholder="Escribe tus tareas...">
-                <button onclick="sendMessage()" class="bg-[#004D40] text-white size-12 rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-all">
-                    <span class="material-symbols-outlined">send</span>
-                </button>
-            </div>
-            <div class="text-center">
-                <p class="text-[9px] font-bold text-slate-400 tracking-widest uppercase">
-                    POWERED BY: <a href="https://www.instagram.com/mirlo.digital/" target="_blank" class="text-[#11d4c4]">@MIRLODIGITAL</a>
-                </p>
-            </div>
+<footer class="bg-white border-t border-slate-100 p-4">
+    <div class="flex flex-col gap-3">
+        <div class="flex items-center gap-2">
+            <input type="text" id="user-input" 
+                   class="flex-1 bg-slate-100 border-none rounded-full py-3 px-6 text-sm focus:ring-2 focus:ring-[#11d4c4] outline-none" 
+                   placeholder="Escribe tus tareas...">
+            <button onclick="sendMessage()" class="bg-[#004D40] text-white size-12 rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-all">
+                <span class="material-symbols-outlined">send</span>
+            </button>
         </div>
-    </footer>
+        <div class="text-center">
+            <p class="text-[10px] font-medium text-slate-400 tracking-wide">
+                Hecho con <span class="text-red-400">❤️</span> por 
+                <a href="https://www.instagram.com/mirlo.digital/" target="_blank" class="text-[#11d4c4] font-bold hover:underline">
+                    @MIRLODIGITAL
+                </a>
+            </p>
+        </div>
+    </div>
+</footer>
 </div>
 
-<script>
-    async function sendMessage() {
-        const inputField = document.getElementById('user-input');
-        const sendButton = inputField.nextElementSibling;
-        const message = inputField.value.trim();
-        if (!message) return;
+    <script>
+// 1. Variable de memoria (FUERA de las funciones)
+let chatContext = [];
 
-        inputField.disabled = true;
-        sendButton.disabled = true;
-        sendButton.style.opacity = "0.5";
+// 2. Función principal para enviar mensajes
+async function sendMessage() {
+    const inputField = document.getElementById('user-input');
+    const sendButton = inputField.nextElementSibling; 
+    const message = inputField.value.trim();
+    
+    if (!message) return;
 
-        appendMessage('user', message);
-        inputField.value = '';
+    // Bloqueo de seguridad
+    inputField.disabled = true;
+    sendButton.disabled = true;
+    sendButton.style.opacity = "0.5";
 
-        const typingId = 'typing-' + Date.now();
-        appendMessage('ai', '...', typingId);
+    // Mostramos mensaje del usuario y guardamos en memoria
+    appendMessage('user', message);
+    chatContext.push({ role: "user", content: message });
+    inputField.value = '';
 
-        try {
-            const response = await fetch('/api/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: message })
-            });
-            const data = await response.json();
-            const typingElem = document.getElementById(typingId);
-            if (typingElem) typingElem.closest('.message-row').remove();
-            
-            if (response.ok) {
-                appendMessage('ai', data.text);
-            } else {
-                appendMessage('ai', "⚠️ Error: " + (data.error || "Falla de red."));
-            }
-        } catch (error) {
-            const typingElem = document.getElementById(typingId);
-            if (typingElem) typingElem.closest('.message-row').remove();
-            appendMessage('ai', "⚠️ Revisa tu conexión.");
-        } finally {
-            inputField.disabled = false;
-            sendButton.disabled = false;
-            sendButton.style.opacity = "1";
-            inputField.focus();
+    const typingId = 'typing-' + Date.now();
+    appendMessage('ai', '...', typingId);
+
+    try {
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ messages: chatContext }) 
+        });
+
+        const data = await response.json();
+        
+        // Limpiamos los puntos suspensivos
+        const typingElem = document.getElementById(typingId);
+        if (typingElem) typingElem.closest('.message-row').remove();
+
+        if (response.ok) {
+            appendMessage('ai', data.text);
+            // Guardamos la respuesta de Gery para el historial
+            chatContext.push({ role: "assistant", content: data.text });
+        } else {
+            throw new Error(data.error || "Falla de servidor");
         }
-    }
 
+    } catch (error) {
+        const typingElem = document.getElementById(typingId);
+        if (typingElem) typingElem.closest('.message-row').remove();
+
+        const mensajeError = `⚠️ **Nota de Gery:** "Parece que tuvimos una pequeña interrupción técnica. No te preocupes, esto no afectará tu plan. Por favor, intenta enviar tu mensaje nuevamente o recarga la página para que sigamos optimizando tu tiempo."`;
+        appendMessage('ai', mensajeError);
+        console.error("Gery Error Log:", error);
+
+    } finally {
+        inputField.disabled = false;
+        sendButton.disabled = false;
+        sendButton.style.opacity = "1";
+        inputField.focus();
+        
+        const chatBox = document.getElementById('chat-box');
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+}
+
+// 3. Función para mostrar los mensajes en pantalla
 function appendMessage(sender, text, id = null) {
     const chatBox = document.getElementById('chat-box');
     const row = document.createElement('div');
@@ -181,7 +206,6 @@ function appendMessage(sender, text, id = null) {
         ? 'bg-[#ede7f6] text-[#004D40] rounded-2xl rounded-tr-none' 
         : 'bg-white border border-slate-100 rounded-2xl rounded-tl-none';
 
-    // Construimos la estructura básica
     row.innerHTML = `
         ${sender === 'ai' ? `
             <div class="flex items-center gap-2 mb-1 ml-1">
@@ -199,17 +223,11 @@ function appendMessage(sender, text, id = null) {
         </div>
     `;
 
-    // AGREGAMOS EL BOTÓN DE WHATSAPP DE FORMA SEGURA (Sin inyectar texto en el HTML)
     if (sender === 'ai' && text !== '...') {
         const btn = document.createElement('button');
         btn.className = "whatsapp-btn";
         btn.innerHTML = `<span class="material-symbols-outlined !text-[16px]">share</span> Compartir Plan`;
-        
-        // Aquí pasamos el texto de forma segura sin que las comillas lo rompan
-        btn.onclick = function() {
-            shareToWhatsApp(text);
-        };
-        
+        btn.onclick = function() { shareToWhatsApp(text); };
         row.querySelector('.bubble-container').appendChild(btn);
     }
     
@@ -217,44 +235,49 @@ function appendMessage(sender, text, id = null) {
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-    function toggleExplanation(element, method) {
-        const tableRow = element.closest('tr');
-        const nextRow = tableRow.nextElementSibling;
-        if (nextRow && nextRow.classList.contains('explanation-row')) {
-            nextRow.remove();
-            return;
-        }
-        const explanations = {
-            pomodoro: "⏱️ **Pomodoro:** Foco total 25 min / Descanso 5 min.",
-            pareto: "🎯 **Pareto:** Prioriza el 20% que genera el 80% de valor.",
-            parkinson: "⏳ **Parkinson:** Asigna un tiempo límite para evitar que la tarea se extienda.",
-            bienestar: "🌿 **Bienestar:** Recarga necesaria para mantener tu rendimiento."
-        };
-        const newRow = document.createElement('tr');
-        newRow.className = 'explanation-row';
-        newRow.innerHTML = `<td colspan="4" class="p-3 border-l-4 border-[#11d4c4] bg-[#f0fdfa]">${marked.parse(explanations[method])}</td>`;
-        tableRow.parentNode.insertBefore(newRow, tableRow.nextSibling);
+// 4. Funciones de apoyo (Explicación y WhatsApp)
+function toggleExplanation(element, method) {
+    const tableRow = element.closest('tr');
+    const nextRow = tableRow.nextElementSibling;
+    if (nextRow && nextRow.classList.contains('explanation-row')) {
+        nextRow.remove();
+        return;
     }
+    const explanations = {
+        pomodoro: "⏱️ **Pomodoro:** Foco total 25 min / Descanso 5 min.",
+        pareto: "🎯 **Pareto:** Prioriza el 20% que genera el 80% de valor.",
+        parkinson: "⏳ **Parkinson:** Asigna un tiempo límite para evitar que la tarea se extienda.",
+        bienestar: "🌿 **Bienestar:** Recarga necesaria para mantener tu rendimiento."
+    };
+    const newRow = document.createElement('tr');
+    newRow.className = 'explanation-row';
+    newRow.innerHTML = `<td colspan="4" class="p-3 border-l-4 border-[#11d4c4] bg-[#f0fdfa]">${marked.parse(explanations[method])}</td>`;
+    tableRow.parentNode.insertBefore(newRow, tableRow.nextSibling);
+}
 
 function shareToWhatsApp(text) {
-    // Eliminamos caracteres técnicos para que en WhatsApp sea solo texto legible
     let clean = text
-        .replace(/###/g, '*') // Títulos a negritas
-        .replace(/\|/g, ' ')  // Quitar barras de tabla
-        .replace(/>/g, '')    // Quitar citas
-        .replace(/🟢|🔵|🔴/g, (match) => match + ' ') // Espacio después de emoji
+        .replace(/###/g, '*')
+        .replace(/\|/g, ' ')
+        .replace(/>/g, '')
+        .replace(/🟢|🔵|🔴/g, (match) => match + ' ')
         .trim();
 
     const intro = "*📍 MI PLAN ESTRATÉGICO CON GERY*\n\n";
     window.open(`https://wa.me/?text=${encodeURIComponent(intro + clean)}`, '_blank');
 }
-    window.onload = () => {
+
+// 5. Inicio automático al cargar
+window.onload = () => {
     const bienvenidaGery = `Hola, espero que estés muy bien. ⚙️✨ 
-    
+
 ¿Qué debes hacer hoy? Te ayudaré a organizar tu tiempo. Para empezar, por favor lístame tus tareas pendientes y dime **a qué hora inicia tu día**.`;
     
     appendMessage('ai', bienvenidaGery);
+    // Guardamos el saludo en la memoria para que la IA sepa que ya inició
+    chatContext.push({ role: "assistant", content: bienvenidaGery });
 };
 </script>
+
 </body>
 </html>
