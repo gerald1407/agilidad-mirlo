@@ -1,9 +1,11 @@
 export default async function handler(req, res) {
+  // 1. Recibimos 'messages' (la lista completa), no solo 'message'
+  const { messages } = req.body; 
+
   if (req.method !== 'POST') return res.status(405).json({ error: "Method not allowed" });
   const API_KEY = process.env.GROQ_API_KEY;
 
   try {
-    const { message } = req.body;
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: 'POST',
       headers: {
@@ -39,7 +41,8 @@ export default async function handler(req, res) {
                - Método: Solo la palabra (Pomodoro, Pareto, Parkinson, Bienestar) sin emojis.
             4. CONSEJO: > 💡 **CONSEJO DE INGENIERÍA DE VALOR** \n > [Texto] \n > Optimiza tu tiempo, maximiza tu valor.` 
           },
-          { role: "user", content: message }
+          // 2. IMPORTANTE: Aquí inyectamos todo el historial que viene del chat
+          ...messages 
         ],
         temperature: 0.4
       })
