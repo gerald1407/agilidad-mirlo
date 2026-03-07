@@ -33,7 +33,7 @@ export default async function handler(req, res) {
             - Si el usuario dice "¿Por qué X es baja?", responde: "Entiendo, si para ti tiene un valor estratégico mayor, vamos a moverlo a Alta. ¿A qué hora prefieres hacerlo?".
             
             FORMATO DE RESPUESTA (ESTRICTO):
-            1. ANÁLISIS TÉCNICO: Resumen empático.
+            1. MAPA DE TU PLANIFICACIÓN: Resumen empático.
             2. CLASIFICACIÓN: ### 🟢, ### 🔵, ### 🔴.
             3. SPRINT DEL DÍA (TABLA): | Hora | Actividad | Prioridad | Método |
                - Método: Usa solo: Pomodoro, Pareto, Parkinson, Bienestar (sin emojis).
